@@ -1,0 +1,29 @@
+services:
+  teamspeak:
+    image: teamspeak
+    restart: unless-stopped
+    ports:
+      - 9987:9987/udp
+      - 30033:30033
+      - 10011:10011
+    command: ts3server serveradmin_password=${SERVERADMIN_PASSWORD}
+    environment:
+      TS3SERVER_DB_PLUGIN: ts3db_mariadb
+      TS3SERVER_DB_SQLCREATEPATH: create_mariadb
+      TS3SERVER_DB_HOST: maria
+      TS3SERVER_DB_USER: root
+      TS3SERVER_DB_PASSWORD: ${DB_PASSWORD}
+      TS3SERVER_DB_NAME: teamspeak
+      TS3SERVER_DB_WAITUNTILREADY: 30
+      TS3SERVER_LICENSE: accept
+    volumes:
+      - ./data:/var/ts3server/
+
+  maria:
+    image: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: teamspeak
+    volumes:
+      - ./sql:/var/lib/mysql/
